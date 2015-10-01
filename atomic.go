@@ -8,8 +8,14 @@ import (
 var oobPanic = "SetAtomic not allowed on a bitmapSlice of cap() < 4"
 
 // SetAtomic is similar to Set except that it performs the operation atomically.
+func SetAtomic(bitmap []byte, targetBit int, targetValue bool) {
+	ov := (*[1]uint32)(unsafe.Pointer(&bitmap[targetBit/32]))[:]
+	SetAtomicUint32(ov, targetBit%32, targetValue)
+}
+
+// SetAtomic is similar to Set except that it performs the operation atomically.
 // It needs a bitmapSlice where the capacity is at least 4 bytes.
-func SetAtomic(bitmapSlice []byte, targetBit int, targetValue bool) {
+func _SetAtomic(bitmapSlice []byte, targetBit int, targetValue bool) {
 	targetByteIndex := targetBit / 8
 	targetBitIndex := targetBit % 8
 	targetOffset := 0
